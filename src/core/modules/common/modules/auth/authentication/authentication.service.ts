@@ -36,7 +36,7 @@ export class AuthenticationService {
   ): Promise<string | null> {
     const { password } = user;
 
-    const validPassword = informedPassword === password;
+    const validPassword = await bcrypt.compare(informedPassword, password);
 
     if (!validPassword) {
       return null;
@@ -78,6 +78,9 @@ export class AuthenticationService {
   async signUp(signUpDto: SignUpDto) {
     const { email, password } = signUpDto;
 
+    const salt = await bcrypt.genSalt();
+    const passwordHash = await bcrypt.hash(password, salt);
+
     const userExists = await this.prismaService.user.findUnique({
       where: {
         email,
@@ -91,7 +94,7 @@ export class AuthenticationService {
     const user = await this.prismaService.user.create({
       data: {
         email,
-        password,
+        password: passwordHash,
       },
     });
 
