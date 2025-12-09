@@ -44,15 +44,11 @@ export class PaginatedResponseDto<T> {
   @ApiProperty()
   data: T[];
 
-  @ApiProperty()
-  query?: Record<string, string | number>;
-
   constructor({
     data,
     total,
     page,
     limit,
-    query,
   }: {
     data: T[];
     total: number;
@@ -64,7 +60,6 @@ export class PaginatedResponseDto<T> {
     this.page = page;
     this.limit = limit;
     this.totalPages = Math.ceil(total / limit);
-    this.query = query;
     this.data = data;
   }
 }
