@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
-import { PaginationDto } from 'src/core/types/dto/pagination.dto';
+import { PaginatedResponseDto, PaginationDto } from 'src/core/types/dto/pagination.dto';
 
 class QueryData {
   @ApiProperty({ example: 'Search', required: false })
@@ -32,12 +32,7 @@ export class ListPostsDto extends PaginationDto {
   search?: string;
 }
 
-export class ListResponse {
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-  data: Array<PostData>;
-
-  query: QueryData;
+export class ListResponse extends PaginatedResponseDto<PostData> {
+  @ApiProperty({ type: [PostData] })
+  data: PostData[];
 }

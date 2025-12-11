@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/integrations/persistence/database/prisma/prisma.service';
 import { ListPostsDto, ListResponse } from './dto/list-posts.dto';
 import { Prisma } from 'generated/prisma';
+import { PaginatedResponseDto } from 'src/core/types/dto/pagination.dto';
 
 @Injectable()
 export class PostsService {
@@ -44,26 +45,20 @@ export class PostsService {
     ]);
 
     const postData = data.map((post) => {
-      const { content, createdAt, id, title } = post;
-
       return {
-        id,
-        title,
-        content,
-        createdAt,
+        ...post,
         author: username,
       };
     });
 
-    return {
+    return new PaginatedResponseDto({
       total,
       page,
       limit,
-      totalPages: Math.ceil(total / limit),
       data: postData,
       query: {
         search,
       },
-    };
+    });
   }
 }

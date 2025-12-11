@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { ApiTags } from '@nestjs/swagger';
-import { ListPostsDto } from './dto/list-posts.dto';
+import { ListPostsDto, ListResponse } from './dto/list-posts.dto';
 import { Doc } from 'src/utils/documentation/doc';
 
 @ApiTags('Public/Posts')
@@ -11,6 +11,7 @@ export class PostsController {
 
   @Doc({
     name: 'List posts by username',
+    response: ListResponse,
   })
   @Get('/user/:username')
   async listPostsByUsername(@Param('username') username: string, @Query() filters: ListPostsDto) {
