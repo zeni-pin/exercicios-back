@@ -109,9 +109,15 @@ export class PostService {
         data: {
           fileId: createdFile.id,
         },
-        include: {
+        select: {
+          id: true,
+          title: true,
+          content: true,
+          createdAt: true,
+          updatedAt: true,
           file: {
             select: {
+              id: true,
               url: true,
             },
           },
@@ -153,6 +159,7 @@ export class PostService {
           content: true,
           createdAt: true,
           updatedAt: true,
+          file: { select: { id: true, url: true } },
         },
         orderBy: { createdAt: 'desc' },
         skip: (page - 1) * limit,
@@ -163,23 +170,25 @@ export class PostService {
 
     const updatedPosts = await Promise.all(
       posts.map(async (post) => {
-        const postFile = await this.file.getFile({
-          entity: ENUM_FILE_TYPE.POST_COVER,
-          entityId: post.id,
-        });
+        if (post.file) {
+          const postFile = await this.file.getFile({
+            entity: ENUM_FILE_TYPE.POST_COVER,
+            entityId: post.id,
+          });
 
-        return await this.prismaService.post.update({
-          where: { id: post.id },
-          data: { fileId: postFile.id },
-          select: {
-            id: true,
-            title: true,
-            content: true,
-            createdAt: true,
-            updatedAt: true,
-            file: { select: { id: true, url: true } },
-          },
-        });
+          return await this.prismaService.post.update({
+            where: { id: post.id },
+            data: { fileId: postFile.id },
+            select: {
+              id: true,
+              title: true,
+              content: true,
+              createdAt: true,
+              updatedAt: true,
+              file: { select: { id: true, url: true } },
+            },
+          });
+        } else return post;
       }),
     );
 
@@ -235,7 +244,7 @@ export class PostService {
   }: {
     userId: string;
     postId: string;
-    file?: Express.Multer.File;
+    file: Express.Multer.File;
   }): Promise<UpdatePostImageResponse> {
     const profile = await this.getUserProfile(userId);
 
@@ -263,20 +272,20 @@ export class PostService {
         operatorId: profile.id,
       });
 
-      return await this.prismaService.post.update({
+      return await prisma.post.update({
         where: {
           id: post.id,
         },
         data: {
           fileId: createdFile.id,
         },
-        include: {
-          file: {
-            select: {
-              id: true,
-              url: true,
-            },
-          },
+        select: {
+          id: true,
+          title: true,
+          content: true,
+          createdAt: true,
+          updatedAt: true,
+          file: { select: { id: true, url: true } },
         },
       });
     });

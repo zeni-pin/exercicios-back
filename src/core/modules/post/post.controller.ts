@@ -107,6 +107,6 @@ export class PostController {
     @Param('postId') postId: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    await this.postService.updateImage({ userId, postId, file });
+    return await this.postService.updateImage({ userId, postId, file });
   }
 }
