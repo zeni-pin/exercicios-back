@@ -6,6 +6,14 @@ class AuthorResponse {
   username: string;
 }
 
+class PostFile {
+  @ApiProperty({ example: 'clx0987654321' })
+  id: string;
+
+  @ApiProperty({ example: 'https://us-east-1.amazonaws.com/imagem?123' })
+  url: string;
+}
+
 export class PostResponse {
   @ApiProperty({ example: '123e4567-e89b-12d3-a456-426614174000' })
   id: string;
@@ -21,6 +29,9 @@ export class PostResponse {
 
   @ApiProperty({ example: '2025-01-02T00:00:00.000Z' })
   updatedAt: Date;
+
+  @ApiProperty({ type: PostFile })
+  file?: PostFile;
 }
 
 export class EditPostResponse extends PostResponse {}
@@ -52,3 +63,5 @@ export class ListPostsWithAutorResponse extends PaginatedResponseDto<PostWithAut
     title?: string;
   };
 }
+
+export class UpdatePostImageResponse extends PostResponse {}
