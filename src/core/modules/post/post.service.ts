@@ -176,19 +176,16 @@ export class PostService {
             entityId: post.id,
           });
 
-          return await this.prismaService.post.update({
-            where: { id: post.id },
-            data: { fileId: postFile.id },
-            select: {
-              id: true,
-              title: true,
-              content: true,
-              createdAt: true,
-              updatedAt: true,
-              file: { select: { id: true, url: true } },
+          return {
+            ...post,
+            file: {
+              id: postFile.id,
+              url: postFile.url,
             },
-          });
-        } else return post;
+          };
+        }
+
+        return post;
       }),
     );
 
@@ -220,6 +217,7 @@ export class PostService {
         content: true,
         createdAt: true,
         updatedAt: true,
+        file: { select: { id: true, url: true } },
       },
     });
   }

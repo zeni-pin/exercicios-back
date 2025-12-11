@@ -48,7 +48,7 @@ model Post {
   author   Profile @relation(fields: [authorId], references: [id])
 
   fileId String? @unique @map("file_id")
-  file   File?   @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  file   File?   @relation(fields: [fileId], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
