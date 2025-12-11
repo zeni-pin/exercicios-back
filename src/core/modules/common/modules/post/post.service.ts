@@ -7,13 +7,16 @@ import { AppErrorForbidden, AppErrorNotFound } from 'src/utils/errors/app-errors
 export class PostService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  private async verifyPost(params: { postId: string; userId: string }) {
+  private async getPostByIdAndUserIdOrThrow(params: { postId: string; userId: string }) {
     const { postId, userId } = params;
 
     const post = await this.prismaService.post.findUnique({
       where: {
         id: postId,
         deleted: false,
+        author: {
+          userId,
+        },
       },
       include: {
         author: {
@@ -28,17 +31,13 @@ export class PostService {
       throw new AppErrorNotFound('Post não encontrado');
     }
 
-    if (userId !== post.author.user.id) {
-      throw new AppErrorForbidden('Você não tem permissão editar esse conteúdo');
-    }
-
     return post;
   }
 
   async edit(params: { postId: string; body: EditPostDto; userId: string }): Promise<any> {
     const { postId, body, userId } = params;
 
-    await this.verifyPost({ postId, userId });
+    await this.getPostByIdAndUserIdOrThrow({ postId, userId });
 
     return await this.prismaService.post.update({
       where: { id: postId },
@@ -49,7 +48,7 @@ export class PostService {
   async delete(params: { postId: string; userId: string }): Promise<void> {
     const { postId, userId } = params;
 
-    await this.verifyPost({ postId, userId });
+    await this.getPostByIdAndUserIdOrThrow({ postId, userId });
 
     await this.prismaService.post.update({
       where: {
